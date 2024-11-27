@@ -7,9 +7,17 @@ load_dotenv()
 app = Flask(__name__)
  
 
-app.config['MYSQL_HOST'] = os.getenv('LOCALHOST')
+app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = os.getenv('MYSQLPASSWORD')
 app.config['MYSQL_DB'] = 'business_supply'
  
 mysql = MySQL(app)
+
+@app.route('/')
+@app.route('/homescreen', methods=['GET', 'POST'])
+def homescreen():
+    return render_template('homescreen.html')
+
+if __name__ == "__main__":
+    app.run(host="localhost", port=int("5000"))
