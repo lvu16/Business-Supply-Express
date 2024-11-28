@@ -1,4 +1,4 @@
-from flask import Flask,render_template, request
+from flask import Flask,render_template, request, session
 from flask_mysqldb import MySQL
 from dotenv import load_dotenv
 import os
@@ -27,7 +27,14 @@ def homescreen():
 
 @app.route('/employee', methods=['GET', 'POST'])
 def employee():
-    return render_template('employee.html')
+    employee = ''
+    if request.method == "POST" and 'username' in request.form:
+        username = request.form['username']
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute(
+        'SELECT username, taxid FROM employees where username = % s', (username, ))
+        employee = cursor.fetchone()
+    return render_template('employee.html', employee=employee)
 
 @app.route('/owner', methods=['GET', 'POST'])
 def owner():
