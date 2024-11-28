@@ -6,6 +6,39 @@
     </head>
     <body>
         <h1> Employee Procedures </h1>
+        <h2>Add Employee</h2>
+        <form action="/employee" method="post" autocomplete="off">
+            <label for="username">Username:</label><br>
+            <input type="text" id="username" name="username"><br>
+
+            <label for="fname">First name:</label><br>
+            <input type="text" id="fname" name="fname"><br><br>
+
+            <label for="lname">Last name:</label><br>
+            <input type="text" id="lname" name="lname"><br>
+
+            <label for="address">Address:</label><br>
+            <input type="text" id="address" name="address"><br><br>
+
+            <label for="bdate">Birthdate:</label><br>
+            <input type="text" id="bdate" name="bdate"><br>
+
+            <label for="taxid">Tax Id:</label><br>
+            <input type="text" id="taxid" name="taxid"><br><br>
+
+            <label for="hiredate">Hire Date:</label><br>
+            <input type="text" id="hiredate" name="hiredate"><br>
+
+            <label for="experience">Employee Experience:</label><br>
+            <input type="text" id="experience" name="experience"><br><br>
+
+            <label for="salary">Salary:</label><br>
+            <input type="text" id="salary" name="salary"><br><br>
+
+            <input type="submit" value="Submit">
+          </form> 
+
+          <h1> Added employee {{employee}}</h1>
         
     </body>
 </html>
