@@ -25,14 +25,14 @@ def get_date(strDate):
     date = datetime.datetime(year, month, day)
     return date
 
-def toString(input):
+def to_string(input):
     try:
         input = str(input)
     except:
         return None
     return input
 
-def toInt(input):
+def to_int(input):
     try:
         input = int(input)
     except:
