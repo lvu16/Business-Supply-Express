@@ -80,7 +80,7 @@ def start_funding():
                 cursor.callproc('start_funding', [owner, amount, longname, funddate])
                 conn.commit()
                 cursor.execute(
-                    'SELECT username, invested FROM fund where username = % s', (owner, ))
+                    'SELECT username, invested, business FROM fund where username = % s', (owner, ))
                 msg = cursor.fetchone()
                 cursor.close()
             except Exception as e:
@@ -88,6 +88,8 @@ def start_funding():
                 conn.rollback()
             finally:
                 cursor.close()
+            if msg == None:
+                msg = "Due to contraints, the owner investment could not be added"
     return render_template('owner/start_funding.html', msg=msg)
 
 @app.route('/add_owner', methods=['GET', 'POST'])
@@ -114,7 +116,7 @@ def add_owner():
                                                     bdate])
                 conn.commit()
                 cursor.execute(
-                    'SELECT username, fname FROM business_owners where username = % s', (username, ))
+                    'SELECT username, fname FROM business_owners where username = % s and fname = % s', (username, fname))
                 msg = cursor.fetchone()
                 cursor.close()
             except Exception as e:
@@ -122,6 +124,8 @@ def add_owner():
                 conn.rollback()
             finally:
                 cursor.close()
+            if msg == None:
+                msg = "Due to contraints, the owner could not be added."
     return render_template('owner/add_owner.html', msg=msg)
 
 
@@ -139,12 +143,17 @@ def hire_employee():
                 cursor = conn.cursor()
                 cursor.callproc('hire_employee', [username, id])
                 conn.commit()
+                cursor.execute(
+                    'SELECT username, id FROM work_for where username = % s and id = % s', (username, id))
+                msg = cursor.fetchone()
                 cursor.close()
             except Exception as e:
                 print("user could not be hired " + str(e))
                 conn.rollback()
             finally:
                 cursor.close()
+            if msg == None:
+                msg = "Due to contraints, the employee could not be hired."
     return render_template('employee/hire_employee.html', msg=msg)
 
 @app.route('/fire_employee', methods=['GET','POST'])
@@ -167,6 +176,8 @@ def fire_employee():
                 conn.rollback()
             finally:
                 cursor.close()
+            if msg == None:
+                msg = "Due to contraints, the employee could not be fired."
     return render_template('employee/fire_employee.html', msg=msg)
     
 @app.route('/add_employee', methods=['GET', 'POST'])
@@ -208,6 +219,8 @@ def add_employee():
                 conn.rollback()
             finally:
                 cursor.close()
+            if msg == None:
+                msg = "Due to contraints, the employee could not be added"
     return render_template('employee/add_employee.html', msg=msg)
 if __name__ == "__main__":
     app.run(host="localhost", port=int("5000"))
