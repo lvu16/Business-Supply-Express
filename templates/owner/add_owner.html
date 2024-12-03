@@ -1,0 +1,32 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title> Add Employee </title> 
+        <link rel="stylesheet" href="../static/style.css">  
+    </head>
+    <body>
+        <h1> Owner Procedures </h1>
+        <h2>Add Owner</h2>
+        <form action="/add_owner" method="post" autocomplete="off">
+            <label for="username">Username:</label><br>
+            <input type="text" id="username" name="username"><br>
+
+            <label for="fname">First name:</label><br>
+            <input type="text" id="fname" name="fname"><br><br>
+
+            <label for="lname">Last name:</label><br>
+            <input type="text" id="lname" name="lname"><br>
+
+            <label for="address">Address:</label><br>
+            <input type="text" id="address" name="address"><br><br>
+
+            <label for="bdate">Birthdate:</label><br>
+            <input type="text" id="bdate" name="bdate"><br>
+
+            <input type="submit" value="Submit">
+          </form> 
+
+          <h1> Message {{ msg }}</h1>
+        
+    </body>
+</html>
