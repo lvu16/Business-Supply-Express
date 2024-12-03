@@ -77,12 +77,8 @@ def fire_employee():
             try:
                 conn = mysql.connection
                 cursor = conn.cursor()
-                #cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
                 cursor.callproc('fire_employee', [username, id])
                 conn.commit()
-                # cursor.execute(
-                #     'SELECT username, taxid FROM employees where username = % s', (username, ))
-                # msg = cursor.fetchone()
                 cursor.close()
             except Exception as e:
                 print("user could not be fired " + str(e))
@@ -118,7 +114,6 @@ def add_employee():
             try:
                 conn = mysql.connection
                 cursor = conn.cursor()
-                #cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
                 cursor.callproc('add_employee', [username, fname, lname, address, 
                                                     bdate, taxid, hiredate, experience, salary])
                 conn.commit()
@@ -132,13 +127,5 @@ def add_employee():
             finally:
                 cursor.close()
     return render_template('employee/add_employee.html', msg=msg)
-
-# @app.route('/business_and_location', methods=['GET', 'POST'])
-# def business_and_location():
-#     return render_template('business_and_location.html')
-
-# @app.route('/views', methods=['GET', 'POST'])
-# def views():
-#     return render_template('views.html')
 if __name__ == "__main__":
     app.run(host="localhost", port=int("5000"))
