@@ -1,0 +1,29 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title> Start Funding </title> 
+        <link rel="stylesheet" href="../static/style.css">  
+    </head>
+    <body>
+        <h1> Owner Procedures </h1>
+        <h2>Start Funding</h2>
+        <form action="/start_funding" method="post" autocomplete="off">
+            <label for="owner">Owner Username:</label><br>
+            <input type="text" id="owner" name="owner"><br>
+
+            <label for="amount">Investment Amount:</label><br>
+            <input type="text" id="amount" name="amount"><br><br>
+
+            <label for="longname">Business Name:</label><br>
+            <input type="text" id="longname" name="longname"><br>
+
+            <label for="funddate">Fund Date:</label><br>
+            <input type="text" id="funddate" name="funddate"><br><br>
+
+            <input type="submit" value="Submit">
+          </form> 
+
+          <h1> Message: {{ msg }}</h1>
+        
+    </body>
+</html>
