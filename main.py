@@ -58,6 +58,22 @@ def business_and_location():
 def views():
     return render_template('views.html')
 
+@app.route('/employee_view', methods=['GET', 'POST'])
+def employee_view():
+    msg = ""
+    try:
+        conn = mysql.connection
+        cursor = conn.cursor()
+        cursor.execute(
+            'SELECT * from display_employee_view')
+        results = cursor.fetchall()
+        cursor.close()
+    except Exception as e:
+        msg = "View could not be created: " + str(e)
+        conn.rollback()
+    finally:
+        cursor.close()
+    return render_template('employee/employee_view.html', msg=msg, results=results)
 
 @app.route('/start_funding', methods=['GET', 'POST'])
 def start_funding():
