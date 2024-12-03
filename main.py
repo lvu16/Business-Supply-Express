@@ -15,7 +15,7 @@ app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = os.getenv('MYSQLPASSWORD')
 app.config['MYSQL_DB'] = 'business_supply'
-app.debug = False
+app.debug = True
  
 mysql = MySQL(app)
 
@@ -28,12 +28,12 @@ def homescreen():
 @app.route('/employee', methods=['GET', 'POST'])
 def employee():
     employee = ''
-    if request.method == "POST" and 'username' in request.form:
-        username = request.form['username']
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute(
-        'SELECT username, taxid FROM employees where username = % s', (username, ))
-        employee = cursor.fetchone()
+    # if request.method == "POST" and 'username' in request.form:
+    #     username = request.form['username']
+    #     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    #     cursor.execute(
+    #     'SELECT username, taxid FROM employees where username = % s', (username, ))
+    #     employee = cursor.fetchone()
     return render_template('employee/employee.html', employee=employee)
 
 @app.route('/owner', methods=['GET', 'POST'])
@@ -65,6 +65,32 @@ def business_and_location():
 def views():
     return render_template('views.html')
 
+@app.route('/fire_employee', methods=['GET','POST'])
+def fire_employee():
+    msg = ""
+    values = ['username', 'id']
+    if request.method == "POST":
+        msg = check_request_form(request.form, values)
+        if msg == '':
+            username = to_string(request.form['username'])
+            id = to_string(request.form['id'])
+            try:
+                conn = mysql.connection
+                cursor = conn.cursor()
+                #cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+                cursor.callproc('fire_employee', [username, id])
+                conn.commit()
+                # cursor.execute(
+                #     'SELECT username, taxid FROM employees where username = % s', (username, ))
+                # msg = cursor.fetchone()
+                cursor.close()
+            except Exception as e:
+                print("user could not be fired " + str(e))
+                conn.rollback()
+            finally:
+                cursor.close()
+    return render_template('employee/fire_employee.html', msg=msg)
+    
 @app.route('/add_employee', methods=['GET', 'POST'])
 def add_employee():
     msg = ""
@@ -73,38 +99,38 @@ def add_employee():
 
     if request.method == "POST":
         msg = check_request_form(request.form, values)
-    if msg == '':
-        username = to_string(request.form['username'])
-        fname = to_string(request.form['fname'])
-        lname = to_string(request.form['lname'])
-        address = to_string(request.form['address'])
-        bdate = get_date(request.form['bdate'])
-        if type(bdate) == str:
-            msg += bdate
-            return render_template('employee/add_employee.html', msg=msg)
-        taxid = to_string(request.form['taxid'])
-        hiredate = get_date(request.form['hiredate'])
-        if type(hiredate) == str:
-            msg += hiredate
-            return render_template('employee/add_employee.html', msg=msg)
-        experience = to_int(request.form['experience'])
-        salary = to_int(request.form['salary'])
-        try:
-            conn = mysql.connection
-            cursor = conn.cursor()
-            #cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-            cursor.callproc('add_employee', [username, fname, lname, address, 
-                                             bdate, taxid, hiredate, experience, salary])
-            conn.commit()
-            cursor.execute(
-                'SELECT username, taxid FROM employees where username = % s', (username, ))
-            msg = cursor.fetchone()
-            cursor.close()
-        except Exception as e:
-            print("user could not be added " + str(e))
-            conn.rollback()
-        finally:
-            cursor.close()
+        if msg == '':
+            username = to_string(request.form['username'])
+            fname = to_string(request.form['fname'])
+            lname = to_string(request.form['lname'])
+            address = to_string(request.form['address'])
+            bdate = get_date(request.form['bdate'])
+            if type(bdate) == str:
+                msg += bdate
+                return render_template('employee/add_employee.html', msg=msg)
+            taxid = to_string(request.form['taxid'])
+            hiredate = get_date(request.form['hiredate'])
+            if type(hiredate) == str:
+                msg += hiredate
+                return render_template('employee/add_employee.html', msg=msg)
+            experience = to_int(request.form['experience'])
+            salary = to_int(request.form['salary'])
+            try:
+                conn = mysql.connection
+                cursor = conn.cursor()
+                #cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+                cursor.callproc('add_employee', [username, fname, lname, address, 
+                                                    bdate, taxid, hiredate, experience, salary])
+                conn.commit()
+                cursor.execute(
+                    'SELECT username, taxid FROM employees where username = % s', (username, ))
+                msg = cursor.fetchone()
+                cursor.close()
+            except Exception as e:
+                print("user could not be added " + str(e))
+                conn.rollback()
+            finally:
+                cursor.close()
     return render_template('employee/add_employee.html', msg=msg)
 
 # @app.route('/business_and_location', methods=['GET', 'POST'])
