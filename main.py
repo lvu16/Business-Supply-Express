@@ -65,6 +65,29 @@ def business_and_location():
 def views():
     return render_template('views.html')
 
+
+@app.route('/hire_employee', methods=['GET','POST'])
+def hire_employee():
+    msg = ""
+    values = ['username', 'id']
+    if request.method == "POST":
+        msg = check_request_form(request.form, values)
+        if msg == '':
+            username = to_string(request.form['username'])
+            id = to_string(request.form['id'])
+            try:
+                conn = mysql.connection
+                cursor = conn.cursor()
+                cursor.callproc('hire_employee', [username, id])
+                conn.commit()
+                cursor.close()
+            except Exception as e:
+                print("user could not be hired " + str(e))
+                conn.rollback()
+            finally:
+                cursor.close()
+    return render_template('employee/hire_employee.html', msg=msg)
+
 @app.route('/fire_employee', methods=['GET','POST'])
 def fire_employee():
     msg = ""
