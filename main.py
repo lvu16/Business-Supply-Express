@@ -59,6 +59,41 @@ def views():
     return render_template('views.html')
 
 
+@app.route('/add_owner', methods=['GET', 'POST'])
+def add_owner():
+    msg = ""
+    values = ['username', 'fname', 'lname', 'address', 
+              'bdate']
+
+    if request.method == "POST":
+        msg = check_request_form(request.form, values)
+        if msg == '':
+            username = to_string(request.form['username'])
+            fname = to_string(request.form['fname'])
+            lname = to_string(request.form['lname'])
+            address = to_string(request.form['address'])
+            bdate = get_date(request.form['bdate'])
+            if type(bdate) == str:
+                msg += bdate
+                return render_template('owner/add_owner.html', msg=msg)
+            try:
+                conn = mysql.connection
+                cursor = conn.cursor()
+                cursor.callproc('add_employee', [username, fname, lname, address, 
+                                                    bdate])
+                conn.commit()
+                cursor.execute(
+                    'SELECT username, fname FROM business_owners where username = % s', (username, ))
+                msg = cursor.fetchone()
+                cursor.close()
+            except Exception as e:
+                print("owner could not be added " + str(e))
+                conn.rollback()
+            finally:
+                cursor.close()
+    return render_template('owner/add_owner.html', msg=msg)
+
+
 @app.route('/hire_employee', methods=['GET','POST'])
 def hire_employee():
     msg = ""
