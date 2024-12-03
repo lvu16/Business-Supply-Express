@@ -27,18 +27,11 @@ def homescreen():
 
 @app.route('/employee', methods=['GET', 'POST'])
 def employee():
-    employee = ''
-    # if request.method == "POST" and 'username' in request.form:
-    #     username = request.form['username']
-    #     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    #     cursor.execute(
-    #     'SELECT username, taxid FROM employees where username = % s', (username, ))
-    #     employee = cursor.fetchone()
-    return render_template('employee/employee.html', employee=employee)
+    return render_template('employee/employee.html')
 
 @app.route('/owner', methods=['GET', 'POST'])
 def owner():
-    return render_template('owner.html')
+    return render_template('owner/owner.html')
 
 @app.route('/driver', methods=['GET', 'POST'])
 def driver():
