@@ -59,6 +59,37 @@ def views():
     return render_template('views.html')
 
 
+@app.route('/start_funding', methods=['GET', 'POST'])
+def start_funding():
+    msg = ""
+    values = ['owner', 'amount', 'longname', 'funddate']
+
+    if request.method == "POST":
+        msg = check_request_form(request.form, values)
+        if msg == '':
+            owner = to_string(request.form['owner'])
+            amount = to_int(request.form['amount'])
+            longname = to_string(request.form['longname'])
+            funddate = get_date(request.form['funddate'])
+            if type(funddate) == str:
+                msg += funddate
+                return render_template('owner/start_funding.html', msg=msg)
+            try:
+                conn = mysql.connection
+                cursor = conn.cursor()
+                cursor.callproc('start_funding', [owner, amount, longname, funddate])
+                conn.commit()
+                cursor.execute(
+                    'SELECT username, invested FROM fund where username = % s', (owner, ))
+                msg = cursor.fetchone()
+                cursor.close()
+            except Exception as e:
+                print("owner investment could not be added " + str(e))
+                conn.rollback()
+            finally:
+                cursor.close()
+    return render_template('owner/start_funding.html', msg=msg)
+
 @app.route('/add_owner', methods=['GET', 'POST'])
 def add_owner():
     msg = ""
