@@ -1,0 +1,42 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title> Owner View </title> 
+        <link rel="stylesheet" href="../static/style.css">  
+    </head>
+    <body>
+        <h1>Owner View</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>username</th>
+                    <th>first_name</th>
+                    <th>last_name</th>
+                    <th>address</th>
+                    <th>num_businesses</th>
+                    <th>num_places</th>
+                    <th>highs</th>
+                    <th>lows</th>
+                    <th>debt</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in results %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td>{{ row[3] }}</td>
+                    <td>{{ row[4] }}</td>
+                    <td>{{ row[5] }}</td>
+                    <td>{{ row[6] }}</td>
+                    <td>{{ row[7] }}</td>
+                    <td>{{ row[8] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </body>
+    <h1> Message: {{ msg }}</h1>
+
+</html>

@@ -59,7 +59,7 @@ def views():
     return render_template('views.html')
 
 @app.route('/owner_view', methods=['GET', 'POST'])
-def employee_view():
+def owner_view():
     msg = ""
     try:
         conn = mysql.connection
