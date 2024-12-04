@@ -326,7 +326,7 @@ def view_drivers():
     finally:
         cursor.close()
 
-    return render_template('view_drivers.html', drivers=drivers)
+    return render_template('driver_views.html', drivers=drivers)
 
 
 if __name__ == "__main__":
