@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product View</title>
+    <!-- Add Bootstrap for styling (optional) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-pzjw8f+ua7Kw1TIqNyowvlvOqoiRcVTeMs9YJ9T9aj/LSK19CSlyWPyvtn3LMbs" crossorigin="anonymous">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa; /* Light background for readability */
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+            color: #343a40; /* Darker text for contrast */
+        }
+
+        .button-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .button-container a {
+            text-decoration: none;
+            background-color: #007BFF; /* Primary button color */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        .button-container a:hover {
+            background-color: #0056b3; /* Darker hover effect */
+        }
+
+        table {
+            width: 90%;
+            margin: 0 auto 20px;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        table thead {
+            background-color: #007BFF; /* Header background */
+            color: white;
+        }
+
+        table th,
+        table td {
+            text-align: left;
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd; /* Subtle row separation */
+        }
+
+        table th {
+            text-align: center;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #343a40;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Product View</h1>
+    <div class="button-container">
+        <a href="/views" class="button">Back to Views Home</a>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Location</th>
+                <th>Amount Available</th>
+                <th>Low Price</th>
+                <th>High Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in product_data %}
+                <tr>
+                    <td>{{ product.product_name }}</td>
+                    <td>{{ product.location }}</td>
+                    <td style="text-align: center;">{{ product.amount_available }}</td>
+                    <td style="text-align: right;">${{ product.low_price }}</td>
+                    <td style="text-align: right;">${{ product.high_price }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

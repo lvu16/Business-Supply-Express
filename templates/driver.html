@@ -1,11 +1,57 @@
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title> Homescreen </title> 
-        <link rel="stylesheet" href="../static/style.css">  
-    </head>
-    <body>
-        <h1> Driver Procedures </h1>
-        
-    </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Procedures</title>
+    <style>
+        /* CSS for styling the buttons */
+        .button-container {
+            display: flex;
+            flex-direction: column; /* Stack buttons vertically */
+            align-items: left;    /* Center align the buttons */
+            gap: 1.5rem;            /* Space between buttons */
+            margin: 2rem 0;
+        }
+
+        .button-container a {
+            text-decoration: none; /* Remove underline from links */
+        }
+
+        .button-container button {
+            padding: 1rem 2rem;       /* Larger padding for bigger buttons */
+            background-color: #007BFF;
+            color: white;
+            border: none;             /* Remove default border */
+            border-radius: 8px;       /* Rounder edges */
+            font-size: 1.25rem;       /* Larger font size */
+            font-weight: bold;        /* Bold text */
+            text-align: center;       /* Center align the text */
+            width: 100%;               /* Button width (adjust as needed) */
+            max-width: 300px;         /* Limit the button width */
+            cursor: pointer;          /* Pointer cursor for buttons */
+            transition: background-color 0.3s;
+        }
+
+        .button-container button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+    </style>
+</head>
+    <h1>Driver Procedures</h1>
+    <div class="button-container">
+        <!-- Link for Add Product -->
+        <a href="/add_driver">
+            <button type="button">Add Driver</button>
+        </a>
+        <a href="/takeover_van">
+            <button type="button">Takeover Van</button>
+        </a>
+
+        <!-- Link for Remove Product -->
+        <a href="/remove_driver">
+            <button type="button">Remove Driver</button>
+        </a>
+    </div>
+</body>
 </html>
