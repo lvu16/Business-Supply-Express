@@ -1,0 +1,40 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title> Employee View </title> 
+        <link rel="stylesheet" href="../static/style.css">  
+    </head>
+    <body>
+        <h1>Employee View</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>username</th>
+                    <th>taxID</th>
+                    <th>salary</th>
+                    <th>hired</th>
+                    <th>experience</th>
+                    <th>licenseID</th>
+                    <th>driving_experience</th>
+                    <th>is_manager</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in results %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td>{{ row[3] }}</td>
+                    <td>{{ row[4] }}</td>
+                    <td>{{ row[5] }}</td>
+                    <td>{{ row[6] }}</td>
+                    <td>{{ row[7] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </body>
+    <h1> Message: {{ msg }}</h1>
+
+</html>

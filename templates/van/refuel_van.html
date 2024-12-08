@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title> Refuel Van </title> 
+        <link rel="stylesheet" href="../static/style.css">  
+    </head>
+
+
+    <body>
+        <h1>Van Procedures</h1>
+        <h2>Refuel Van</h2>
+
+        <form action="/refuel_van" method="post">
+            <label for="vanID">Van ID: </label><br>
+            <input type="text" name="vanID" id="vanID"><br><br>
+
+            <label for="vanTag">Van Tag: </label><br>
+            <input type="text" name="vanTag" id="vanTag"><br><br>
+
+            <label for="more_fuel">More Fuel: </label><br>
+            <input type="text" name="more_fuel" id="more_fuel"><br><br>
+
+            <input type="submit" value="Submit">
+
+        </form>
+
+        <h1> Message: {{ msg }}</h1>
+    </body>
+</html>

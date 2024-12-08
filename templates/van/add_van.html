@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title> Add Van </title> 
+        <link rel="stylesheet" href="../static/style.css">  
+    </head>
+
+
+    <body>
+        <h1>Van Procedures</h1>
+        <h2>Add Van</h2>
+        <form action="/add_van" method="post">
+            <label for="vanID">Van ID: </label><br>
+            <input type="text" name="vanID" id="vanID"><br><br>
+
+            <label for="vanTag">Van Tag: </label><br>
+            <input type="text" name="vanTag" id="vanTag"><br><br>
+
+            <label for="fuel">Fuel: </label><br>
+            <input type="text" name="fuel" id="fuel"><br><br>
+
+            <label for="capacity">Van Capacity: </label><br>
+            <input type="text" name="capacity" id="capacity"><br><br>
+
+            <label for="sale">Sales: </label><br>
+            <input type="text" name="sale" id="sale"><br><br>
+
+            <label for="drivenBy">Driven By: </label><br>
+            <input type="text" name="drivenBy" id="drivenBy"><br><br>
+
+            <input type="submit" value="Submit">
+
+        </form>
+
+        <h1> Message: {{ msg }}</h1>
+    </body>
+</html>
