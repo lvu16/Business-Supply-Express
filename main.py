@@ -770,13 +770,17 @@ def add_van():
             try:
                 conn = mysql.connection
                 cursor = conn.cursor()
+                cursor.execute(
+                    'SELECT id, tag, fuel, capacity, sales, driven_by FROM vans where id = % s and tag = % s', (id, tag))
+                van = cursor.fetchone()
+                if van:
+                    msg = "Van already exists"
+                    return render_template('van/add_van.html', msg=msg)
                 cursor.callproc('add_van', [id, tag, fuel, capacity, sale, drivenBy])
                 conn.commit()
                 cursor.execute(
                     'SELECT id, tag, fuel, capacity, sales, driven_by FROM vans where id = % s and tag = % s', (id, tag))
                 van = cursor.fetchone()
-                cursor.close()
-                
                 if van and van[2] == fuel and van[3] == capacity and van[4] == sale and van[5] == drivenBy:
                     msg = f'Van {id} tag {tag} successfully added'
                 else:
