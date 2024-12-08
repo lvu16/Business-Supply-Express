@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title> Add Business </title> 
+        <link rel="stylesheet" href="../static/style.css">  
+    </head>
+    <body>
+        <h1> Business Procedures </h1>
+        <h2>Add Business</h2>
+        <form action="/add_business" method="post" autocomplete="off">
+            <label for="long_name">Business Name:</label><br>
+            <input type="text" id="long_name" name="long_name"><br>
+
+            <label for="rating">Rating (1-5):</label><br>
+            <input type="text" id="rating" name="rating"><br><br>
+
+            <label for="spent">Amount Spent:</label><br>
+            <input type="text" id="spent" name="spent"><br>
+
+            <label for="location">Location:</label><br>
+            <input type="text" id="location" name="location"><br><br>
+
+            <input type="submit" value="Submit">
+        </form> 
+
+        <h1> Message: {{ msg }}</h1>
+    </body>
+</html>
