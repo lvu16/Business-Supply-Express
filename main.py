@@ -20,7 +20,7 @@ app.debug = True
  
 mysql = MySQL(app)
 
-
+#routing to main pages
 @app.route('/')
 @app.route('/homescreen', methods=['GET', 'POST'])
 def homescreen():
@@ -49,7 +49,7 @@ def service():
 
 @app.route('/van', methods=['GET', 'POST'])
 def van():
-    return render_template('van.html')
+    return render_template('van/van.html')
 
 @app.route('/business_and_location', methods=['GET', 'POST'])
 def business_and_location():
@@ -59,6 +59,9 @@ def business_and_location():
 def views():
     return render_template('views.html')
 
+
+
+# OWNER view
 @app.route('/owner_view', methods=['GET', 'POST'])
 def owner_view():
     msg = ""
@@ -76,6 +79,8 @@ def owner_view():
         cursor.close()
     return render_template('owner/owner_view.html', msg=msg, results=results)
 
+
+# EMPLOYEE view
 @app.route('/employee_view', methods=['GET', 'POST'])
 def employee_view():
     msg = ""
@@ -93,6 +98,8 @@ def employee_view():
         cursor.close()
     return render_template('employee/employee_view.html', msg=msg, results=results)
 
+
+# OWNER procedures start funding
 @app.route('/start_funding', methods=['GET', 'POST'])
 def start_funding():
     msg = ""
@@ -126,6 +133,8 @@ def start_funding():
                 msg = "Due to contraints, the owner investment could not be added"
     return render_template('owner/start_funding.html', msg=msg)
 
+
+# OWNER produre add owner
 @app.route('/add_owner', methods=['GET', 'POST'])
 def add_owner():
     msg = ""
@@ -162,7 +171,7 @@ def add_owner():
                 msg = "Due to contraints, the owner could not be added."
     return render_template('owner/add_owner.html', msg=msg)
 
-
+# EMPLOYEE procedure hire employee
 @app.route('/hire_employee', methods=['GET','POST'])
 def hire_employee():
     msg = ""
@@ -190,6 +199,7 @@ def hire_employee():
                 msg = "Due to contraints, the employee could not be hired."
     return render_template('employee/hire_employee.html', msg=msg)
 
+# EMPLOYEE procedure fire employee
 @app.route('/fire_employee', methods=['GET','POST'])
 def fire_employee():
     msg = ""
@@ -213,7 +223,8 @@ def fire_employee():
             if msg == None:
                 msg = "Due to contraints, the employee could not be fired."
     return render_template('employee/fire_employee.html', msg=msg)
-    
+
+# EMPLOYEE procedure add employee    
 @app.route('/add_employee', methods=['GET', 'POST'])
 def add_employee():
     msg = ""
@@ -256,6 +267,7 @@ def add_employee():
             if msg == None:
                 msg = "Due to contraints, the employee could not be added"
     return render_template('employee/add_employee.html', msg=msg)
+
 
 @app.route('/testdb')
 def testdb():
@@ -464,6 +476,185 @@ def add_location():
             if msg == None:
                 msg = "Due to constraints, the location could not be added"
     return render_template('business_and_location/add_location.html', msg=msg)
+
+# VAN procedure add van
+@app.route('/add_van', methods=['GET', 'POST'])
+def add_van():
+    msg = ''
+    values = ['vanID', 'vanTag', 'fuel', 'capacity', 'sale']
+    if request.method == 'POST':
+        msg = check_request_form(request.form, values)
+        if msg == '':
+            id = to_string(request.form['vanID'])
+            tag = to_int(request.form['vanTag'])
+            fuel = to_int(request.form['fuel'])
+            capacity = to_int(request.form['capacity'])
+            sale = to_int(request.form['sale'])
+            drivenBy = to_string(request.form['drivenBy'])
+            try:
+                conn = mysql.connection
+                cursor = conn.cursor()
+                cursor.callproc('add_van', [id, tag, fuel, capacity, sale, drivenBy])
+                conn.commit()
+                cursor.execute(
+                    'SELECT id, tag, fuel, capacity, sales, driven_by FROM vans where id = % s and tag = % s', (id, tag))
+                van = cursor.fetchone()
+                cursor.close()
+                
+                if van and van[2] == fuel and van[3] == capacity and van[4] == sale and van[5] == drivenBy:
+                    msg = f'Van {id} tag {tag} successfully added'
+                else:
+                    msg = "Van could not be added due to constraints."
+            except Exception as e:
+                print("van could not be added " + str(e))
+                msg = f"An error occurs while adding van: {e}"
+            finally:
+                cursor.close()
+
+    return render_template('van/add_van.html', msg=msg)
+
+# VAN procedure remove van
+@app.route('/remove_van', methods=['GET', 'POST'])
+def remove_van():
+    msg = ''
+    values = ['vanID', 'vanTag']
+    if request.method == 'POST':
+        msg = check_request_form(request.form, values)
+        if msg == '':
+            id = to_string(request.form['vanID'])
+            tag = to_string(request.form['vanTag'])
+        
+            try:
+                conn = mysql.connection
+                cursor = conn.cursor()
+                cursor.callproc('remove_van', [id, tag])
+                conn.commit()
+                cursor.execute(
+                    'SELECT id, tag FROM vans where id = % s and tag = % s', (id, tag))
+                van = cursor.fetchone()
+                cursor.close()
+                if van:
+                    msg = f"Cannot remove van {id} tag {tag} due to constrains"
+                else:
+                    msg = f"Van {id} tag {tag} successfully removed"
+            except Exception as e:
+                print("van could not be removed: " + str(e))
+                msg = f"An error occurs while removing van: {e}"
+            finally:
+                cursor.close()
+
+    return render_template('van/remove_van.html', msg = msg)
+
+# VAN procedure load van
+@app.route('/load_van', methods=['GET', 'POST'])
+def load_van():
+    msg = ''
+    values = ['vanID', 'vanTag', 'barcode', 'price']
+    if request.method == 'POST':
+        msg = check_request_form(request.form, values)
+        if msg == '':
+            id = to_string(request.form['vanID'])
+            tag = to_int(request.form['vanTag'])
+            barcode = to_string(request.form['barcode'])
+            morePackages = to_int(request.form['morePackages'])
+            price = to_int(request.form['price'])
+            
+            try:
+                conn = mysql.connection
+                cursor = conn.cursor()
+                cursor.callproc('load_van', [id, tag, barcode, morePackages, price])
+                conn.commit()
+                cursor.execute(
+                    'SELECT id, tag, barcode, price FROM contain where id = %s and tag = %s and barcode = %s', (id, tag, barcode))
+                product = cursor.fetchone()
+                cursor.close()
+                if product and product[3] == price:
+                    msg = f'product with barcode {barcode} is loadded successfully on van {id} tag {tag}'
+                else:
+                    msg = "Cannot load product due to constrains"
+            except Exception as e:
+                print("van could not be added " + str(e))
+                msg = f"An error occurs while loading van: {e}"
+            finally:
+                cursor.close()
+
+    return render_template('van/load_van.html', msg=msg)
+
+#VAN procedure drive van
+@app.route('/drive_van', methods=['GET', 'POST'])
+def drive_van():
+    msg =''
+    values = ['vanID', 'vanTag', 'destination']
+    if request.method == 'POST':
+        msg = check_request_form(request.form, values)
+        if msg == '':
+            id = to_string(request.form['vanID'])
+            tag = to_int(request.form['vanTag'])
+            destination = to_string(request.form['destination'])
+
+            try:
+                conn = mysql.connection
+                cursor = conn.cursor()
+                cursor.callproc('drive_van', [id, tag, destination])
+                conn.commit()
+                cursor.execute(
+                    'SELECT id, tag, located_at FROM vans where id = %s and tag = %s', (id, tag, destination))
+                van = cursor.fetchone()
+                cursor.close()
+
+                if van and van[2] == destination:
+                    msg = f'Van {id} tag {tag} successfully moved to {destination}'
+                else:
+                    msg = "Van could not be moved due to constraints or the van might not have enough fuel."
+            except Exception as e:
+                print("cannot drive the van" + str(e))
+                msg = f'An error occurred while driving the van: {e}'
+                conn.rollback()
+            finally:
+                cursor.close()
+
+    return render_template('van/drive_van.html', msg = msg)
+
+# VAN procedure refuel van
+@app.route('/refuel_van', methods=['GET', 'POST'])
+def refuel_van():
+    msg = ''
+    values = ['vanID', 'vanTag', 'more_fuel']
+    if request.method == 'POST':
+        msg = check_request_form(request.form, values)
+        if msg == '':
+            id = to_string(request.form['vanID'])
+            tag = to_int(request.form['vanTag'])
+            more_fuel = to_int(request.form['more_fuel'])
+            try:
+                conn = mysql.connection
+                cursor = conn.cursor()
+                cursor.execute(
+                    'SELECT id, tag, fuel FROM vans where id = %s and tag = %s', (id, tag))
+                van = cursor.fetchone()
+                old_fuel = van[2]
+
+                cursor.callproc('refuel_van', [id, tag, more_fuel])
+                conn.commit()
+                cursor.execute(
+                    'SELECT id, tag, fuel FROM vans where id = %s and tag = %s', (id, tag))
+                updated_van = cursor.fetchone()
+                new_fuel = updated_van[2]
+                expected_fuel = old_fuel + more_fuel
+                cursor.close()
+                
+                if new_fuel == expected_fuel:
+                    msg = f'Van {id} tag {tag} is refueled successfully'
+                else:
+                    msg = f"Van {id} tag {tag} could not be refueled due to constraints."
+            except Exception as e:
+                print("van could not be refueled " + str(e))
+                msg = f"An error occurs while refueling van: {e}"
+            finally:
+                cursor.close()
+    return render_template('van/refuel_van.html', msg = msg)
+
+
 
 if __name__ == "__main__":
     app.run(host="localhost", port=int("5000"))
