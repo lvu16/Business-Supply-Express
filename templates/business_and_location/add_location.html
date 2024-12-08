@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title> Add Location </title> 
+        <link rel="stylesheet" href="../static/style.css">  
+    </head>
+    <body>
+        <h1> Location Procedures </h1>
+        <h2>Add Location</h2>
+        <form action="/add_location" method="post" autocomplete="off">
+            <label for="label">Location Label:</label><br>
+            <input type="text" id="label" name="label"><br>
+
+            <label for="x_coord">X Coordinate:</label><br>
+            <input type="text" id="x_coord" name="x_coord"><br><br>
+
+            <label for="y_coord">Y Coordinate:</label><br>
+            <input type="text" id="y_coord" name="y_coord"><br>
+
+            <label for="space">Space:</label><br>
+            <input type="text" id="space" name="space"><br><br>
+
+            <input type="submit" value="Submit">
+        </form> 
+
+        <h1> Message: {{ msg }}</h1>
+    </body>
+</html>

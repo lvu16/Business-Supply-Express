@@ -1,0 +1,22 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title> Manage Service </title> 
+        <link rel="stylesheet" href="../static/style.css">  
+    </head>
+    <body>
+        <h1> Service Procedures </h1>
+        <h2>Manage Service</h2>
+        <form action="/manage_service" method="post" autocomplete="off">
+            <label for="username">Employee Username:</label><br>
+            <input type="text" id="username" name="username"><br>
+
+            <label for="id">Service ID:</label><br>
+            <input type="text" id="id" name="id"><br><br>
+
+            <input type="submit" value="Submit">
+        </form> 
+
+        <h1> Message: {{ msg }}</h1>
+    </body>
+</html>
