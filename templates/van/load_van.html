@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Load Van </title> 
+        <link rel="stylesheet" href="../static/style.css">  
+    </head>
+
+
+    <body>
+        <h1>Van Procedures</h1>
+        <h2>Load Van</h2>
+        <form action="/load_van" method="post">
+            <label for="vanID">Van ID: </label><br>
+            <input type="text" name="vanID" id="vanID"><br><br>
+
+            <label for="vanTag">Van Tag: </label><br>
+            <input type="text" name="vanTag" id="vanTag"><br><br>
+
+            <label for="barcode">Barcode: </label><br>
+            <input type="text" name="barcode" id="barcode"><br><br>
+
+            <label for="morePackages">More Packages: </label><br>
+            <input type="text" name="morePackages" id="morePackages"><br><br>
+
+            <label for="price">Price: </label><br>
+            <input type="text" name="price" id="price"><br><br>
+
+            <input type="submit" value="Submit">
+
+
+        </form>
+
+        <h1> Message: {{ msg }}</h1>
+    </body>
+</html>

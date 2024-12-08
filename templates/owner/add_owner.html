@@ -1,13 +1,13 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title> Homescreen </title> 
+        <title> Add Employee </title> 
         <link rel="stylesheet" href="../static/style.css">  
     </head>
     <body>
-        <h1> Employee Procedures </h1>
-        <h2>Add Employee</h2>
-        <form action="/employee" method="post" autocomplete="off">
+        <h1> Owner Procedures </h1>
+        <h2>Add Owner</h2>
+        <form action="/add_owner" method="post" autocomplete="off">
             <label for="username">Username:</label><br>
             <input type="text" id="username" name="username"><br>
 
@@ -23,22 +23,10 @@
             <label for="bdate">Birthdate:</label><br>
             <input type="text" id="bdate" name="bdate"><br>
 
-            <label for="taxid">Tax Id:</label><br>
-            <input type="text" id="taxid" name="taxid"><br><br>
-
-            <label for="hiredate">Hire Date:</label><br>
-            <input type="text" id="hiredate" name="hiredate"><br>
-
-            <label for="experience">Employee Experience:</label><br>
-            <input type="text" id="experience" name="experience"><br><br>
-
-            <label for="salary">Salary:</label><br>
-            <input type="text" id="salary" name="salary"><br><br>
-
             <input type="submit" value="Submit">
           </form> 
 
-          <h1> Added employee {{employee}}</h1>
+          <h1> Message: {{ msg }}</h1>
         
     </body>
 </html>
