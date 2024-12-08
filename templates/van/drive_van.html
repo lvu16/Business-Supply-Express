@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title> Drive Van </title> 
+        <link rel="stylesheet" href="../static/style.css">  
+    </head>
+
+
+    <body>
+        <h1>Van Procedures</h1>
+        <h2>Drive Van</h2>
+
+        <form action="/drive_van" method="post">
+            <label for="vanID">Van ID: </label><br>
+            <input type="text" name="vanID" id="vanID"><br><br>
+
+            <label for="vanTag">Van Tag: </label><br>
+            <input type="text" name="vanTag" id="vanTag"><br><br>
+
+            <label for="destination">Destination: </label><br>
+            <input type="text" name="destination" id="destination"><br><br>
+
+            <input type="submit" value="Submit">
+
+        </form>
+
+        <h1> Message: {{ msg }}</h1>
+    </body>
+</html>
