@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title> Service View </title> 
+        <link rel="stylesheet" href="../static/style.css">  
+    </head>
+    <body>
+        <h1>Service View</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>long_name</th>
+                    <th>home_base</th>
+                    <th>manager</th>
+                    <th>revenue</th>
+                    <th>products_carried</th>
+                    <th>cost_carried</th>
+                    <th>weight_carried</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in results %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td>{{ row[3] }}</td>
+                    <td>{{ row[4] }}</td>
+                    <td>{{ row[5] }}</td>
+                    <td>{{ row[6] }}</td>
+                    <td>{{ row[7] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </body>
+    <h1> Message: {{ msg }}</h1>
+</html>

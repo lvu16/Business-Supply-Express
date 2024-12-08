@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title> Add Service </title> 
+        <link rel="stylesheet" href="../static/style.css">  
+    </head>
+    <body>
+        <h1> Service Procedures </h1>
+        <h2>Add Service</h2>
+        <form action="/add_service" method="post" autocomplete="off">
+            <label for="id">Service ID:</label><br>
+            <input type="text" id="id" name="id"><br>
+
+            <label for="long_name">Service Name:</label><br>
+            <input type="text" id="long_name" name="long_name"><br><br>
+
+            <label for="home_base">Home Base:</label><br>
+            <input type="text" id="home_base" name="home_base"><br>
+
+            <label for="manager">Manager Username:</label><br>
+            <input type="text" id="manager" name="manager"><br><br>
+
+            <input type="submit" value="Submit">
+        </form> 
+
+        <h1> Message: {{ msg }}</h1>
+    </body>
+</html>
