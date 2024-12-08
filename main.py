@@ -757,6 +757,13 @@ def add_van():
             try:
                 conn = mysql.connection
                 cursor = conn.cursor()
+
+                cursor.execute(
+                    'SELECT id, tag, fuel, capacity, sales, driven_by FROM vans where id = % s and tag = % s', (id, tag))
+                van = cursor.fetchone()
+                if van and van[2] == fuel and van[3] == capacity and van[4] == sale and van[5] == drivenBy:
+                    return render_template('van/add_van.html', msg=f'Van {id} tag {tag} already exists')
+
                 cursor.callproc('add_van', [id, tag, fuel, capacity, sale, drivenBy])
                 conn.commit()
                 cursor.execute(
@@ -790,6 +797,11 @@ def remove_van():
             try:
                 conn = mysql.connection
                 cursor = conn.cursor()
+                cursor.execute(
+                    'SELECT id, tag FROM vans where id = % s and tag = % s', (id, tag))
+                van = cursor.fetchone()
+                if van == None:
+                    return render_template('van/remove_van.html', msg = f'Van {id} tag {tag} is not in the database')
                 cursor.callproc('remove_van', [id, tag])
                 conn.commit()
                 cursor.execute(
@@ -825,13 +837,29 @@ def load_van():
             try:
                 conn = mysql.connection
                 cursor = conn.cursor()
+
+                cursor.execute(
+                    'SELECT id, tag, barcode, quantity, price FROM contain where id = %s and tag = %s and barcode = %s', (id, tag, barcode))
+                product = cursor.fetchone()
+
+                if product and product[4] != price:
+                    return render_template('van/load_van.html', msg= f'product with barcode {barcode} already exists on van {id} tag {tag} with price {product[4]}')
+
+                if product:
+                    old_quantity = product[3]
+                    expected_quantity = old_quantity + morePackages
+                else:
+                    expected_quantity = morePackages
+
                 cursor.callproc('load_van', [id, tag, barcode, morePackages, price])
                 conn.commit()
+
                 cursor.execute(
-                    'SELECT id, tag, barcode, price FROM contain where id = %s and tag = %s and barcode = %s', (id, tag, barcode))
+                    'SELECT id, tag, barcode, quantity, price FROM contain where id = %s and tag = %s and barcode = %s', (id, tag, barcode))
                 product = cursor.fetchone()
                 cursor.close()
-                if product and product[3] == price:
+    
+                if product and product[3] == expected_quantity and product[4] == price:
                     msg = f'product with barcode {barcode} is loadded successfully on van {id} tag {tag}'
                 else:
                     msg = "Cannot load product due to constrains"
@@ -858,10 +886,15 @@ def drive_van():
             try:
                 conn = mysql.connection
                 cursor = conn.cursor()
+                cursor.execute(
+                    'SELECT id, tag, located_at FROM vans where id = %s and tag = %s and located_at = %s', (id, tag, destination))
+                van = cursor.fetchone()
+                if van: 
+                     return render_template('van/drive_van.html', msg = f'Van {id} tag {tag} is already at location {destination}')
                 cursor.callproc('drive_van', [id, tag, destination])
                 conn.commit()
                 cursor.execute(
-                    'SELECT id, tag, located_at FROM vans where id = %s and tag = %s', (id, tag, destination))
+                    'SELECT id, tag, located_at FROM vans where id = %s and tag = %s and located_at = %s', (id, tag, destination))
                 van = cursor.fetchone()
                 cursor.close()
 
@@ -895,10 +928,14 @@ def refuel_van():
                 cursor.execute(
                     'SELECT id, tag, fuel FROM vans where id = %s and tag = %s', (id, tag))
                 van = cursor.fetchone()
-                old_fuel = van[2]
-
+                if van:
+                    old_fuel = van[2]
+                else:
+                    return render_template('van/refuel_van.html', msg = f'Van {id} tag {tag} does not exist')
+               
                 cursor.callproc('refuel_van', [id, tag, more_fuel])
                 conn.commit()
+
                 cursor.execute(
                     'SELECT id, tag, fuel FROM vans where id = %s and tag = %s', (id, tag))
                 updated_van = cursor.fetchone()
