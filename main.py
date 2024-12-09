@@ -966,8 +966,28 @@ def refuel_van():
                 cursor.close()
     return render_template('van/refuel_van.html', msg = msg)
 
-
-
+@app.route('/add_worker_role', methods=['GET', 'POST'])
+def add_worker_role():
+    msg = ""
+    if request.method == "POST":
+        username = request.form['username']
+        try:
+            conn = mysql.connection
+            cursor = conn.cursor()
+            cursor.callproc('add_worker_role', [username])
+            conn.commit()
+            cursor.execute(
+                'SELECT username FROM workers where username = %s', (username,))
+            msg = cursor.fetchone()
+            cursor.close()
+        except Exception as e:
+            msg = "Worker role could not be added: " + str(e)
+            conn.rollback()
+        finally:
+            cursor.close()
+        if msg is None:
+            msg = "Due to constraints, the worker role could not be added"
+    return render_template('employee/add_worker_role.html', msg=msg)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
