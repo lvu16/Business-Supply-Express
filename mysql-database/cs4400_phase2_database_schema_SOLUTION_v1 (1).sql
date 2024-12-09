@@ -1,5 +1,5 @@
 -- CS4400: Introduction to Database Systems (Fall 2024)
--- Project Phase II: Database Schema SOLUTION [v0] Monday, Oct 21, 2024
+-- Project Phase II: Database Schema SOLUTION [v2] Monday, Oct 21, 2024
 set global transaction isolation level serializable;
 set global SQL_MODE = 'ANSI,TRADITIONAL';
 set names utf8mb4;
@@ -168,7 +168,17 @@ insert into users (username, first_name, last_name, address, birthdate) values
 ('mrobot2', 'Mister', 'Robot', '10 Clone Me Circle', '1988-11-02'),
 ('rlopez6', 'Radish', 'Lopez', '8 Queens Route', '1999-09-03'),
 ('sprince6', 'Sarah', 'Prince', '22 Peachtree Street', '1968-06-15'),
-('tmccall5', 'Trey', 'McCall', '360 Corkscrew Circle', '1973-03-19');
+('tmccall5', 'Trey', 'McCall', '360 Corkscrew Circle', '1973-03-19'),
+('jdoe1', 'John', 'Doe', '123 Maple Avenue', '1980-02-19'), 
+('asmith2', 'Alice', 'Smith', '456 Oak Street', '1975-07-11'),
+('bwilliams3', 'Brian', 'Williams', '789 Pine Lane', '1990-11-30'),
+('cmartin4', 'Carla', 'Martin', '321 Cedar Drive', '1985-04-05'),
+('rjones5', 'Rachel', 'Jones', '654 Birch Boulevard', '1978-12-22'),
+('twhite7', 'Tom', 'White', '987 Willow Way', '1965-10-17'),
+('mking8', 'Michael', 'King', '432 Elm Road', '1992-08-09'),
+('djohnson9', 'Diane', 'Johnson', '876 Aspen Circle', '1983-01-27'),
+('krobinson10', 'Karen', 'Robinson', '159 Redwood Avenue', '1971-09-03'),
+('cwilson11', 'Charles', 'Wilson', '246 Hickory Lane', '1988-03-14');
 
 insert into employees (username, taxID, hired, experience, salary) values
 ('agarcia7', '999-99-9999', '2019-03-17', 24, 41000),
@@ -184,10 +194,16 @@ insert into employees (username, taxID, hired, experience, salary) values
 ('mrobot1', '101-01-0101', '2015-05-27', 8, 38000),
 ('mrobot2', '010-10-1010', '2015-05-27', 8, 38000),
 ('rlopez6', '123-58-1321', '2017-02-05', 51, 64000),
-('tmccall5', '333-33-3333', '2018-10-17', 29, 33000);
+('tmccall5', '333-33-3333', '2018-10-17', 29, 33000),
+('jdoe1', '123-45-6789', '2020-08-21', 30, 55000),
+('asmith2', '234-56-7890', '2018-05-11', 28, 62000),
+('bwilliams3', '345-67-8901', '2019-12-15', 33, 48000),
+('cmartin4', '456-78-9012', '2021-04-10', 25, 54000),
+('rjones5', '567-89-0123', '2022-09-30', 29, 59000);
 
 insert into business_owners (username) values
-('cjordan5'), ('jstone5'), ('sprince6');
+('cjordan5'), ('jstone5'), ('sprince6'), 
+('twhite7'),('mking8'),('djohnson9'),('krobinson10'),('cwilson11');
 
 insert into drivers (username, licenseID, license_type, successful_trips) values
 ('agarcia7', '610623', 'CDL', 38), 
@@ -197,7 +213,8 @@ insert into drivers (username, licenseID, license_type, successful_trips) values
 ('fprefontaine6', '657483', 'private', 2), 
 ('lrodriguez5', '287182', 'CDL', 67), 
 ('mrobot1', '101010', 'CDL', 18), 
-('rlopez6', '235711', 'private', 58);
+('rlopez6', '235711', 'private', 58),
+('jdoe1', '326167', 'commercial', 6);
 
 insert into workers (username) values
 ('ckann5'), 
@@ -205,7 +222,9 @@ insert into workers (username) values
 ('eross10'),
 ('hstark16'), 
 ('mrobot2'), 
-('tmccall5');
+('tmccall5'),
+('asmith2'),
+('bwilliams3');
 
 insert into products (barcode, iname, weight) values
 ('gc_4C6B9R', 'glass cleaner', 4), 
@@ -213,7 +232,17 @@ insert into products (barcode, iname, weight) values
 ('sd_6J5S8H', 'screwdrivers', 4), 
 ('pt_16WEF6', 'paper towels', 6), 
 ('st_2D4E6L', 'shipping tape', 3), 
-('hm_5E7L23M', 'hammer', 3);
+('hm_5E7L23M', 'hammer', 3),
+('gl_5R3Y9K', 'glue sticks', 12),
+('hd_7T6Q1B', 'hand sanitizer', 8),
+('tp_9J2D4L', 'toilet paper', 24),
+('mk_1F7S9V', 'markers', 15),
+('pn_3G8D5Q', 'pens', 20),
+('nt_4X3K7P', 'notebooks', 10),
+('rb_8N2V1W', 'rubber bands', 50),
+('pb_6W3J8L', 'push buttons', 40),
+('cf_2H4R9T', 'coffee filters', 100),
+('ct_5B1N6V', 'cotton balls', 75);
 
 insert into locations (label, x_coord, y_coord, space) values 
 ('airport', 5, -6, 15), 
@@ -229,7 +258,15 @@ insert into locations (label, x_coord, y_coord, space) values
 ('highpoint', 11, 3, 4),
 ('garnett', 6, 2, 6),
 ('reynoldstown', 3, -4, 6),
-('inman',1, 12, 5);
+('inman',1, 12, 5),
+('uptown', 2, 8, 3),
+('riverdale', 2, 9, 4),
+('greenwood', 1, 20, 8),
+('oakwood', 4, 11, 5),
+('springfield', 2, 14, 6),
+('lincolnpark', 1, 18, 9),
+('brookside', 3, 7, 4),
+('willowcreek', 2, 13, 0);
 
 insert into businesses (long_name, rating, spent, location) values
 ('Aircraft Electrical Svc', 5, 10, 'airport'),
@@ -253,11 +290,12 @@ insert into vans (id, tag, fuel, capacity, sales, driven_by, located_at) values
 ('mbm', '5', 27, 7, 100, 'fprefontaine6', 'buckhead'),
 ('mbm', '8', 100, 8, 0, 'bsummers4', 'southside'),
 ('mbm','11',  25, 10, 0, NULL, 'buckhead'),
-( 'mbm','16', 17, 5, 40, 'fprefontaine6', 'buckhead'),
+('mbm','16', 17, 5, 40, 'fprefontaine6', 'buckhead'),
+('mbm','20', 17, 5, 40, NULL, 'garnett'),
 ('lcc', '1', 100, 9, 0, 'awilson5', 'airport'),
-( 'lcc', '2', 75, 7, 0, NULL, 'airport'),
+('lcc', '2', 75, 7, 0, NULL, 'airport'),
 ('pbl','3',  100, 5, 50, 'agarcia7', 'avalon'),
-( 'pbl','7', 53, 5, 100, 'agarcia7', 'avalon'),
+('pbl','7', 53, 5, 100, 'agarcia7', 'avalon'),
 ('pbl','8',  100, 6, 0, 'agarcia7', 'inman'),
 ('pbl', '11', 90, 6, 0, NULL, 'inman');
 
@@ -279,6 +317,7 @@ insert into work_for (username, ID) values
 ('eross10', 'lcc'),
 ('hstark16', 'mbm'),
 ('tmccall5', 'mbm'), 
+('tmccall5', 'lcc'), 
 ('mrobot2', 'pbl');
 
 insert into fund (username, invested, invested_date, business) values
@@ -286,4 +325,3 @@ insert into fund (username, invested, invested_date, business) values
 ('sprince6', 10, '2022-03-06', 'Blue Horizon Enterprises'),
 ('jstone5', 30, '2022-09-08', 'Peak Performance Group'),
 ('jstone5', 5, '2022-07-25', 'Elevate Consulting');
-
