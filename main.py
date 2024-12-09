@@ -874,7 +874,7 @@ def load_van():
                 if product and product[3] == expected_quantity and product[4] == price:
                     msg = f'product with barcode {barcode} is loadded successfully on van {id} tag {tag}'
                 else:
-                    msg = "Cannot load product due to constrains"
+                    msg = "Cannot load product due to constraints"
             except Exception as e:
                 print("van could not be added " + str(e))
                 msg = f"An error occurs while loading van: {e}"
