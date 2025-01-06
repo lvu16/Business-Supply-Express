@@ -393,6 +393,27 @@ sp_main: begin
     
     
     
+<<<<<<< HEAD
+    
+    
+	-- declare is_manager int default 0;
+--     declare is_working int default 0;
+--    If ip_username is NULL then leave sp_main; end if;
+--     If ip_id is NULL then leave sp_main; end if;
+
+--     
+-- 	
+--     
+--     select count(*) into is_working from work_for where username = ip_username and id = ip_id;
+-- 	if is_working = 0 then leave sp_main; end if;
+--    
+--     select count(*) into is_manager from delivery_services where manager = ip_username and id != ip_id;
+-- 	if is_manager > 0 then leave sp_main; end if;
+
+--     delete from work_for where username = ip_username and id = ip_id; 
+    
+=======
+>>>>>>> a1649d76c192cfc9892326af16b099c4db22fd4c
 end //
 delimiter ;
 
@@ -710,7 +731,56 @@ sp_main: begin
     -- ensure that the van isn't already at the location
     -- ensure that the van has enough fuel to reach the destination and (then) home base
     -- ensure that the van has enough space at the destination for the trip
+<<<<<<< HEAD
+    
 
+
+    
+ --    
+--     declare curr_loc varchar (40);
+--     declare home_base varchar (40);
+--     declare destination_exists int default 0;
+-- 	declare v_fuel int default 0;
+-- 	declare req_fuel_to_destination int default 0;
+--     declare driven_by_driver varchar(40);
+--     declare req_fuel_to_home int default 0;
+--     declare total_fuel_req int default 0;
+--     declare available_space int default 0;
+--     
+--     If ip_id is NULL then leave sp_main; end if;
+-- 	If ip_tag is NULL then leave sp_main; end if;
+--     
+-- 	select count(*) into destination_exists from locations where label = ip_destination;
+-- 	if destination_exists = 0 then leave sp_main; end if;
+--     
+--     
+--     select located_at, fuel, driven_by into curr_loc, v_fuel, driven_by_driver from vans
+--     where id = ip_id and tag = ip_tag;
+-- 	if curr_loc = ip_destination then leave sp_main; end if;
+--     
+--     select home_base into home_base from delivery_services where id = ip_id;
+--     
+--     set req_fuel_to_destination = fuel_required(curr_loc, ip_destination);
+--     set req_fuel_to_home = fuel_required(ip_destination, home_base);
+-- 	set total_fuel_req = req_fuel_to_destination + req_fuel_to_home;
+--     
+--     if v_fuel < total_fuel_req then leave sp_main; end if;
+--     
+--     select space into available_space from locations where label = ip_destination;
+--     
+--     if available_space is not null and available_space < 1 then leave sp_main; end if;
+--     
+--     update vans 
+--     set located_at = ip_destination, fuel = fuel - req_fuel_to_destination
+--     where id = ip_id and tag = ip_tag;
+--     
+--     update drivers
+--     set successful_trips = successful_trips + 1 
+--     where username = driven_by_driver;
+    
+=======
+
+>>>>>>> a1649d76c192cfc9892326af16b099c4db22fd4c
 end //
 delimiter ;
 
@@ -1023,4 +1093,5 @@ from
     left join rev_table r on s.id = r.id
 group by 
     s.id, s.long_name, s.home_base, s.manager;
-
+-- CALL load_van('mbm', 1, 'hm_5E7L23M', 5, 29);
+-- CALL load_van('lcc', 1, 'pt_16WEF6M', 1, 20);
