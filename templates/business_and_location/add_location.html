@@ -5,9 +5,12 @@
         <link rel="stylesheet" href="../static/style.css">  
     </head>
     <body>
+        <div>
+            <a href = "/"><button type="button" class="button"> Return to Home </button></a>
+        </div>
         <h1> Location Procedures </h1>
         <h2>Add Location</h2>
-        <form action="/add_location" method="post" autocomplete="off">
+        <form action="/add_location" method="post">
             <label for="label">Location Label:</label><br>
             <input type="text" id="label" name="label"><br>
 
@@ -21,6 +24,7 @@
             <input type="text" id="space" name="space"><br><br>
 
             <input type="submit" value="Submit">
+            <input type="reset" value="Cancel">
         </form> 
 
         <h1> Message: {{ msg }}</h1>

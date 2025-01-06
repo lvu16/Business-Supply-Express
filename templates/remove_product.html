@@ -6,11 +6,15 @@
     <title>Remove Product</title>
 </head>
 <body>
+    <div>
+        <a href = "/"><button type="button" class="button"> Return to Home </button></a>
+    </div>
     <h1>Remove Product</h1>
     <form method="POST" action="/remove_product">
         <label for="barcode">Barcode:</label>
         <input type="text" id="barcode" name="barcode" required><br><br>
         <button type="submit">Remove Product</button>
+        <input type="reset" value="Cancel">
     </form>
 </body>
 </html>

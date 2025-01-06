@@ -325,4 +325,3 @@ insert into fund (username, invested, invested_date, business) values
 ('sprince6', 10, '2022-03-06', 'Blue Horizon Enterprises'),
 ('jstone5', 30, '2022-09-08', 'Peak Performance Group'),
 ('jstone5', 5, '2022-07-25', 'Elevate Consulting');
-

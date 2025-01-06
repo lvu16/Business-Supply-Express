@@ -393,6 +393,7 @@ sp_main: begin
     
     
     
+<<<<<<< HEAD
     
     
 	-- declare is_manager int default 0;
@@ -411,6 +412,8 @@ sp_main: begin
 
 --     delete from work_for where username = ip_username and id = ip_id; 
     
+=======
+>>>>>>> a1649d76c192cfc9892326af16b099c4db22fd4c
 end //
 delimiter ;
 
@@ -549,6 +552,11 @@ sp_main: begin
 
 END //
 DELIMITER ;
+
+--  CALL load_van('lcc', 1, '16_WEF6', 1, 20);
+-- CALL load_van('mbm', 1, 'hm_5E7L23M', 5, 29);
+
+
 
 -- [16] refuel_van()
 -- -----------------------------------------------------------------------------
@@ -723,6 +731,7 @@ sp_main: begin
     -- ensure that the van isn't already at the location
     -- ensure that the van has enough fuel to reach the destination and (then) home base
     -- ensure that the van has enough space at the destination for the trip
+<<<<<<< HEAD
     
 
 
@@ -769,6 +778,9 @@ sp_main: begin
 --     set successful_trips = successful_trips + 1 
 --     where username = driven_by_driver;
     
+=======
+
+>>>>>>> a1649d76c192cfc9892326af16b099c4db22fd4c
 end //
 delimiter ;
 

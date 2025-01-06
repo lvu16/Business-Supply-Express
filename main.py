@@ -418,15 +418,15 @@ def add_owner():
             try:
                 conn = mysql.connection
                 cursor = conn.cursor()
-                cursor.callproc('add_employee', [username, fname, lname, address, 
+                cursor.callproc('add_owner', [username, fname, lname, address, 
                                                     bdate])
                 conn.commit()
                 cursor.execute(
-                    'SELECT username, fname FROM business_owners where username = % s and fname = % s', (username, fname))
+                    'SELECT username FROM business_owners where username = % s', (username))
                 msg = cursor.fetchone()
                 cursor.close()
             except Exception as e:
-                print("owner could not be added " + str(e))
+                msg = "owner could not be added " + str(e)
                 conn.rollback()
             finally:
                 cursor.close()
@@ -452,7 +452,10 @@ def hire_employee():
                 cursor.execute(
                     'SELECT username, id FROM work_for where username = % s and id = % s', (username, id))
                 msg = cursor.fetchone()
-                cursor.close()
+                cursor.execute(
+                'SELECT username, id FROM work_for where username = % s and id = % s', (username, id))
+                employee = cursor.fetchone()
+
             except Exception as e:
                 print("user could not be hired " + str(e))
                 conn.rollback()
@@ -460,6 +463,8 @@ def hire_employee():
                 cursor.close()
             if msg == None:
                 msg = "Due to contraints, the employee could not be hired."
+            else:
+                msg = employee
     return render_template('employee/hire_employee.html', msg=msg)
 
 # EMPLOYEE procedure fire employee
@@ -477,7 +482,15 @@ def fire_employee():
                 cursor = conn.cursor()
                 cursor.callproc('fire_employee', [username, id])
                 conn.commit()
+
+                cursor.execute(
+                    'SELECT username, id FROM work_for where username = % s and id = % s', (username, id))
+                employee = cursor.fetchone()
                 cursor.close()
+                if employee:
+                    msg = f"Cannot fire employee {username} with id {id} due to constraints"
+                else:
+                    msg = f"Employee {username} with id {id} successfully removed"
             except Exception as e:
                 print("user could not be fired " + str(e))
                 conn.rollback()
@@ -764,13 +777,12 @@ def add_van():
                 if van and van[2] == fuel and van[3] == capacity and van[4] == sale and van[5] == drivenBy:
                     return render_template('van/add_van.html', msg=f'Van {id} tag {tag} already exists')
 
+
                 cursor.callproc('add_van', [id, tag, fuel, capacity, sale, drivenBy])
                 conn.commit()
                 cursor.execute(
                     'SELECT id, tag, fuel, capacity, sales, driven_by FROM vans where id = % s and tag = % s', (id, tag))
                 van = cursor.fetchone()
-                cursor.close()
-                
                 if van and van[2] == fuel and van[3] == capacity and van[4] == sale and van[5] == drivenBy:
                     msg = f'Van {id} tag {tag} successfully added'
                 else:
@@ -809,7 +821,7 @@ def remove_van():
                 van = cursor.fetchone()
                 cursor.close()
                 if van:
-                    msg = f"Cannot remove van {id} tag {tag} due to constrains"
+                    msg = f"Cannot remove van {id} tag {tag} due to constraints"
                 else:
                     msg = f"Van {id} tag {tag} successfully removed"
             except Exception as e:
@@ -862,7 +874,7 @@ def load_van():
                 if product and product[3] == expected_quantity and product[4] == price:
                     msg = f'product with barcode {barcode} is loadded successfully on van {id} tag {tag}'
                 else:
-                    msg = "Cannot load product due to constrains"
+                    msg = "Cannot load product due to constraints"
             except Exception as e:
                 print("van could not be added " + str(e))
                 msg = f"An error occurs while loading van: {e}"
@@ -954,8 +966,28 @@ def refuel_van():
                 cursor.close()
     return render_template('van/refuel_van.html', msg = msg)
 
-
-
+@app.route('/add_worker_role', methods=['GET', 'POST'])
+def add_worker_role():
+    msg = ""
+    if request.method == "POST":
+        username = request.form['username']
+        try:
+            conn = mysql.connection
+            cursor = conn.cursor()
+            cursor.callproc('add_worker_role', [username])
+            conn.commit()
+            cursor.execute(
+                'SELECT username FROM workers where username = %s', (username,))
+            msg = cursor.fetchone()
+            cursor.close()
+        except Exception as e:
+            msg = "Worker role could not be added: " + str(e)
+            conn.rollback()
+        finally:
+            cursor.close()
+        if msg is None:
+            msg = "Due to constraints, the worker role could not be added"
+    return render_template('employee/add_worker_role.html', msg=msg)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
