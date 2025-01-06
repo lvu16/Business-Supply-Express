@@ -1,9 +1,4 @@
 
-
-
-
-
-
 -- CS4400: Introduction to Database Systems (Fall 2024)
 -- Project Phase III: Stored Procedures SHELL [v3] Thursday, Nov 7, 2024
 set global transaction isolation level serializable;
@@ -247,8 +242,14 @@ sp_main: begin
     select count(*) into homebase_exists from locations where label = ip_home_base;
 	if homebase_exists = 0 then leave sp_main; end if;
     
-	select count(*) into manager_exists from workers where username = ip_manager;
-	if manager_exists = 0 then leave sp_main; end if;
+    
+    if ip_manager is not NULL then
+        select count(*) into manager_exists from workers where username = ip_manager;
+        if manager_exists = 0 then leave sp_main; end if;
+    end if;
+    
+	-- select count(*) into manager_exists from workers where username = ip_manager;
+	-- if manager_exists = 0 then leave sp_main; end if;
     
     insert into delivery_services (id, long_name, home_base, manager) 
     values (ip_id, ip_long_name, ip_home_base, ip_manager);
@@ -367,24 +368,48 @@ drop procedure if exists fire_employee;
 delimiter //
 create procedure fire_employee (in ip_username varchar(40), in ip_id varchar(40))
 sp_main: begin
-	-- ensure that the employee is currently working for the service
-    -- ensure that the employee isn't an active manager
-    
-	declare is_manager int default 0;
-    declare is_working int default 0;
-   If ip_username is NULL then leave sp_main; end if;
-    If ip_id is NULL then leave sp_main; end if;
-
-    
 	
+    -- null checks
+    if ip_username is null or ip_id is null then 
+        leave sp_main; 
+    end if;
     
-    select count(*) into is_working from work_for where username = ip_username and id = ip_id;
-	if is_working = 0 then leave sp_main; end if;
-   
-    select count(*) into is_manager from delivery_services where manager = ip_username and id != ip_id;
-	if is_manager > 0 then leave sp_main; end if;
+    -- ensure that the employee is currently working for the service
+    if not exists (select 1 from work_for where username = ip_username and id = ip_id) then 
+        leave sp_main; 
+    end if;
 
+    -- ensure that the employee isn't an active manager
+    if (select manager from delivery_services where id = ip_id) = ip_username then
+        leave sp_main;
+    end if;
+    
+    -- ensure the service has more than one employee
+    if (select count(*) from work_for where id = ip_id) < 2 then
+        leave sp_main;
+    end if;
+    
     delete from work_for where username = ip_username and id = ip_id;
+    
+    
+    
+    
+    
+	-- declare is_manager int default 0;
+--     declare is_working int default 0;
+--    If ip_username is NULL then leave sp_main; end if;
+--     If ip_id is NULL then leave sp_main; end if;
+
+--     
+-- 	
+--     
+--     select count(*) into is_working from work_for where username = ip_username and id = ip_id;
+-- 	if is_working = 0 then leave sp_main; end if;
+--    
+--     select count(*) into is_manager from delivery_services where manager = ip_username and id != ip_id;
+-- 	if is_manager > 0 then leave sp_main; end if;
+
+--     delete from work_for where username = ip_username and id = ip_id; 
     
 end //
 delimiter ;
@@ -535,31 +560,49 @@ delimiter //
 create procedure refuel_van (in ip_id varchar(40), in ip_tag integer, in ip_more_fuel integer)
 sp_main: begin
 
-	
+    -- null checks
+    if ip_id is null or ip_tag is null or ip_more_fuel is null then
+        leave sp_main;
+    end if;
 
-    DECLARE current_fuel INT DEFAULT 0;
-    DECLARE van_location VARCHAR(40);
-    DECLARE home_base_location VARCHAR(40);
-    
-    If ip_id is NULL then leave sp_main; end if;
-	If ip_tag is NULL then leave sp_main; end if;
+    -- ensure that the specified van exists and belongs to the given service
+    if not exists (select 1 from vans where id = ip_id and tag = ip_tag) then
+        leave sp_main;
+    end if;
 
-    IF ip_more_fuel <= 0 THEN
-        LEAVE sp_main;
-    END IF;
+    -- ensure that the van is currently located at the service's home base
+    if (select located_at from vans where id = ip_id and tag = ip_tag) 
+       <> (select home_base from delivery_services where id = ip_id) then
+        leave sp_main;
+    end if;
 
-    SELECT fuel, located_at INTO current_fuel, van_location FROM vans WHERE id = ip_id AND tag = ip_tag LIMIT 1;
+    -- refuel
+    update vans set fuel = fuel + ip_more_fuel
+    where id = ip_id and tag = ip_tag;
 
-    IF current_fuel IS NULL OR van_location IS NULL THEN 
-        LEAVE sp_main; 
-    END IF;
+   --  DECLARE current_fuel INT DEFAULT 0;
+--     DECLARE van_location VARCHAR(40);
+--     DECLARE home_base_location VARCHAR(40);
+--     
+--     If ip_id is NULL then leave sp_main; end if;
+-- 	If ip_tag is NULL then leave sp_main; end if;
 
-    SELECT home_base INTO home_base_location FROM delivery_services WHERE id = ip_id;
-    IF van_location != home_base_location THEN 
-        LEAVE sp_main; 
-    END IF;
+--     IF ip_more_fuel <= 0 THEN
+--         LEAVE sp_main;
+--     END IF;
 
-    UPDATE vans SET fuel = fuel + ip_more_fuel WHERE id = ip_id AND tag = ip_tag;
+--     SELECT fuel, located_at INTO current_fuel, van_location FROM vans WHERE id = ip_id AND tag = ip_tag LIMIT 1;
+
+--     IF current_fuel IS NULL OR van_location IS NULL THEN 
+--         LEAVE sp_main; 
+--     END IF;
+
+--     SELECT home_base INTO home_base_location FROM delivery_services WHERE id = ip_id;
+--     IF van_location != home_base_location THEN 
+--         LEAVE sp_main; 
+--     END IF;
+
+--     UPDATE vans SET fuel = fuel + ip_more_fuel WHERE id = ip_id AND tag = ip_tag;
 
 end //
 delimiter ;
@@ -579,11 +622,30 @@ delimiter //
 create function fuel_required (ip_departure varchar(40), ip_arrival varchar(40))
 	returns integer reads sql data
 begin
-	if (ip_departure = ip_arrival) then return 0;
-    else return (select 1 + truncate(sqrt(power(arrival.x_coord - departure.x_coord, 2) + power(arrival.y_coord - departure.y_coord, 2)), 0) as fuel
-		from (select x_coord, y_coord from locations where label = ip_departure) as departure,
-        (select x_coord, y_coord from locations where label = ip_arrival) as arrival);
-	end if;
+    declare d_x, d_y, a_x, a_y double;
+    declare computed_fuel int;
+
+    if ip_departure = ip_arrival then
+        return 0;
+    end if;
+
+    -- Retrieve coordinates for both departure and arrival locations
+    select x_coord, y_coord into d_x, d_y
+    from locations
+    where label = ip_departure;
+
+    select x_coord, y_coord into a_x, a_y
+    from locations
+    where label = ip_arrival;
+
+    -- Compute the required fuel based on distance
+    set computed_fuel = 1 + truncate(sqrt(power(a_x - d_x, 2) + power(a_y - d_y, 2)), 0);
+    return computed_fuel;
+-- 	if (ip_departure = ip_arrival) then return 0;
+--     else return (select 1 + truncate(sqrt(power(arrival.x_coord - departure.x_coord, 2) + power(arrival.y_coord - departure.y_coord, 2)), 0) as fuel
+-- 		from (select x_coord, y_coord from locations where label = ip_departure) as departure,
+--         (select x_coord, y_coord from locations where label = ip_arrival) as arrival);
+-- 	end if;
 end //
 delimiter ;
 
@@ -591,52 +653,121 @@ drop procedure if exists drive_van;
 delimiter //
 create procedure drive_van (in ip_id varchar(40), in ip_tag integer, in ip_destination varchar(40))
 sp_main: begin
+    -- Variables to store necessary details
+    declare current_location varchar(40);
+    declare base_location varchar(40);
+    declare current_fuel int;
+    declare fuel_needed_to_target int;
+    declare fuel_needed_back_home int;
+    declare total_fuel_needed int;
+    declare spot_available int;
+    declare assigned_driver varchar(40);
+
+    -- Basic input validation
+    if ip_id is null or ip_tag is null or ip_destination is null then
+        leave sp_main;
+    end if;
+
+    -- Confirm that the target location is known
+    if (select count(*) from locations where label = ip_destination) = 0 then
+        leave sp_main;
+    end if;
+
+    -- Retrieve the van’s current status and the manager’s home base
+    select home_base into base_location from delivery_services where id = ip_id;
+    select located_at, fuel, driven_by into current_location, current_fuel, assigned_driver
+    from vans
+    where id = ip_id and tag = ip_tag;
+
+    -- Ensure the van actually exists for the given service
+    if current_location is null or assigned_driver is null then
+        leave sp_main;
+    end if;
+
+    -- If the van is already at the requested destination, no trip is needed
+    if current_location = ip_destination then
+        leave sp_main;
+    end if;
+
+    -- Calculate fuel requirements: to destination and then back to home base
+    set fuel_needed_to_target = fuel_required(current_location, ip_destination);
+    set fuel_needed_back_home = fuel_required(ip_destination, base_location);
+    set total_fuel_needed = fuel_needed_to_target + fuel_needed_back_home;
+
+    -- Check if the van has enough fuel for the round trip portion
+    if current_fuel < total_fuel_needed then
+        leave sp_main;
+    end if;
+
+    -- Ensure the destination has room for an additional van
+    select space into spot_available from locations where label = ip_destination;
+    if spot_available is not null and spot_available < 1 then
+        leave sp_main;
+    end if;
+
+    -- Update the van’s location and fuel levels after traveling
+    update vans
+    set located_at = ip_destination,
+        fuel = fuel - fuel_needed_to_target
+    where id = ip_id and tag = ip_tag;
+
+    -- The driver has successfully completed a trip
+    update drivers
+    set successful_trips = successful_trips + 1
+    where username = assigned_driver;
+    
+
 
 
     -- ensure that the destination is a valid location
     -- ensure that the van isn't already at the location
     -- ensure that the van has enough fuel to reach the destination and (then) home base
     -- ensure that the van has enough space at the destination for the trip
-    declare curr_loc varchar (40);
-    declare home_base varchar (40);
-    declare destination_exists int default 0;
-	declare v_fuel int default 0;
-	declare req_fuel_to_destination int default 0;
-    declare driven_by_driver varchar(40);
-    declare req_fuel_to_home int default 0;
-    declare total_fuel_req int default 0;
-    declare available_space int default 0;
     
-    If ip_id is NULL then leave sp_main; end if;
-	If ip_tag is NULL then leave sp_main; end if;
+
+
     
-	select count(*) into destination_exists from locations where label = ip_destination;
-	if destination_exists = 0 then leave sp_main; end if;
-    
-    
-    select located_at, fuel, driven_by into curr_loc, v_fuel, driven_by_driver from vans
-    where id = ip_id and tag = ip_tag;
-	if curr_loc = ip_destination then leave sp_main; end if;
-    
-    select home_base into home_base from delivery_services where id = ip_id;
-    
-    set req_fuel_to_destination = fuel_required(curr_loc, ip_destination);
-    set req_fuel_to_home = fuel_required(ip_destination, home_base);
-	set total_fuel_req = req_fuel_to_destination + req_fuel_to_home;
-    
-    if v_fuel < total_fuel_req then leave sp_main; end if;
-    
-    select space into available_space from locations where label = ip_destination;
-    
-    if available_space is not null and available_space < 1 then leave sp_main; end if;
-    
-    update vans 
-    set located_at = ip_destination, fuel = fuel - req_fuel_to_destination
-    where id = ip_id and tag = ip_tag;
-    
-    update drivers
-    set successful_trips = successful_trips + 1 
-    where username = driven_by_driver;
+ --    
+--     declare curr_loc varchar (40);
+--     declare home_base varchar (40);
+--     declare destination_exists int default 0;
+-- 	declare v_fuel int default 0;
+-- 	declare req_fuel_to_destination int default 0;
+--     declare driven_by_driver varchar(40);
+--     declare req_fuel_to_home int default 0;
+--     declare total_fuel_req int default 0;
+--     declare available_space int default 0;
+--     
+--     If ip_id is NULL then leave sp_main; end if;
+-- 	If ip_tag is NULL then leave sp_main; end if;
+--     
+-- 	select count(*) into destination_exists from locations where label = ip_destination;
+-- 	if destination_exists = 0 then leave sp_main; end if;
+--     
+--     
+--     select located_at, fuel, driven_by into curr_loc, v_fuel, driven_by_driver from vans
+--     where id = ip_id and tag = ip_tag;
+-- 	if curr_loc = ip_destination then leave sp_main; end if;
+--     
+--     select home_base into home_base from delivery_services where id = ip_id;
+--     
+--     set req_fuel_to_destination = fuel_required(curr_loc, ip_destination);
+--     set req_fuel_to_home = fuel_required(ip_destination, home_base);
+-- 	set total_fuel_req = req_fuel_to_destination + req_fuel_to_home;
+--     
+--     if v_fuel < total_fuel_req then leave sp_main; end if;
+--     
+--     select space into available_space from locations where label = ip_destination;
+--     
+--     if available_space is not null and available_space < 1 then leave sp_main; end if;
+--     
+--     update vans 
+--     set located_at = ip_destination, fuel = fuel - req_fuel_to_destination
+--     where id = ip_id and tag = ip_tag;
+--     
+--     update drivers
+--     set successful_trips = successful_trips + 1 
+--     where username = driven_by_driver;
     
 end //
 delimiter ;
@@ -950,4 +1081,5 @@ from
     left join rev_table r on s.id = r.id
 group by 
     s.id, s.long_name, s.home_base, s.manager;
-
+-- CALL load_van('mbm', 1, 'hm_5E7L23M', 5, 29);
+-- CALL load_van('lcc', 1, 'pt_16WEF6M', 1, 20);
